@@ -123,11 +123,13 @@ router.get('/getResult/:stid/:exid', async (req, res) => {
                 res.json("error" ,err)
             }
             if (result) {
+                var gradeca ={90 : "O" , 80 : "A+", 70 : "A" ,60 : "B+",50 : "B", 0 : "U"};
+                var grade="grade";
                 var sid=req.params.stid;
                 var eid=req.params.exid;
-                var subname={};
+                var submarks=new Object();
                 var x=0;
-                var submarks = [];
+                //var submarks = [];
                 var totalmark=0;
                for(var i=0;i<result.length;i++){
                     if(result[i].studid==sid){
@@ -140,11 +142,17 @@ router.get('/getResult/:stid/:exid', async (req, res) => {
                     }
                     if((result[i].studid==sid)&(result[i].extypeid==eid)){
                        
-                       
+                        var grades;
+                        var t;
                         var it=new Object();
                         var y=result[i].subjectdata.subname;
-                        it[y]=result[i].mark;
-                        submarks[x]=it;
+                        z= result[i].mark;
+                        it[y]=z;
+                    
+                        t=(Math. floor(z/10))*10;
+                        grades=gradeca[t];
+                        it[grade]=grades;
+                        submarks[y]=it;
                         totalmark=totalmark+result[i].mark;
                         x=x+1;
                     }
