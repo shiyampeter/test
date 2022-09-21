@@ -20,13 +20,26 @@ var UserSchema = new Schema({
     trim: true,
     required: true
   },
-  hash_password: {
-    type: String
+  password: {
+    type: String,
+    required :true
   }
 });
 
+/*UserSchema.pre('save',async function(next) { 
+    try {
+        const salt = await bcrypt.genSalt(10);
+        console.log(this.email);
+    }
+
+    catch(error){
+    next(error)
+    }
+})*/
+
 UserSchema.methods.comparePassword = function(password) {
-  return bcrypt.compareSync(password, this.hash_password);
+    
+  return bcrypt.compareSync(password, this.password);
 };
 
 module.exports=mongoose.model('User', UserSchema);

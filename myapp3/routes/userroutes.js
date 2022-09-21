@@ -4,6 +4,7 @@ const router = express.Router();
 const Joi= require('joi');
 //const { validateExam } = require('../validate/examvalidate');
 const mongoose=require('mongoose');
+const bodyparser=require('body-parser');
 
 
 const jwt = require('jsonwebtoken');
@@ -13,24 +14,18 @@ const bcrypt = require('bcrypt');
 //const User = require('../model/user');
 
 router.post('/post/register', async (req, res) => {
+
     const data = new Model({
         fullName: req.body.fullName,
         email: req.body.email,
-        hash_password: req.body.hash_password,
+        password: req.body.password
     
     })
-    try {
-        data.hash_password = bcrypt.hashSync(req.body.password, 10);
-        const dataToSave = await data.save();
-        res.json({success : true, message: "Updated Successfully", status : 200, data: dataToSave});
-        //res.status(200).json(dataToSave)
-    }
-    catch (error) {
-        res.status(400).json({message: error.message})
-    }
-})
- /* Model.hash_password = bcrypt.hashSync(req.body.password, 10);
-  newUser.save(function(err, user) {
+    const salt = await bcrypt.genSalt(10)
+    const hashedpassword = await bcrypt.hash(data.password,salt)
+    data.password=hashedpassword
+    //data.hash_password = bcrypt.hashSync(req.body.password, 10);
+    data.save(function(err, user) {
     if (err) {
       return res.status(400).send({
         message: err
@@ -39,12 +34,31 @@ router.post('/post/register', async (req, res) => {
       user.hash_password = undefined;
       return res.json(user);
     }
-  });*/
+    })
+})
+   /* 
     
+    const data = new Model({
+        fullName: req.body.fullName,
+        email: req.body.email,
+        password: req.body.password
+    
+    })
+    try {
+        data.password = bcrypt.hashSync(req.body.password, 10);
+        const dataToSave = await data.save();
+        res.json({success : true, message: "Updated Successfully", status : 200, data: dataToSave});
+        //res.status(200).json(dataToSave)
+    }
+    catch (error) {
+        res.status(400).json({message: error.message})
+    }
+})*/
+ 
 
-/*router.post('/post/sign_in', async (req, res) => {
+router.post('/post/sign_in', async (req, res) => {
    
-    User.findOne({
+    Model.findOne({
         email: req.body.email
       }, function(err, user) {
         if (err) throw err;
@@ -64,5 +78,15 @@ router.post('/post/loginRequired', async (req, res, next) => {
         
             return res.status(401).json({ message: 'Unauthorized user!!' });
           }
-});*/
+});
+
+router.post('/post/profile', async (req, res, next) => {
+  if (req.user) {
+    res.send(req.user);
+    next();
+  } 
+  else {
+   return res.status(401).json({ message: 'Invalid token' });
+  }
+});
 module.exports = router;

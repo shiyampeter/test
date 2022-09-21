@@ -20,13 +20,13 @@ const routes4 = require('./routes/userroutes');
 
 const app = express();
 app.use(express.json());
-app.use('/api/examtype', routes);
-app.use('/api/student', routes1);
-app.use('/api/subject', routes2);
-app.use('/api/exam', routes3);
-app.use('/api/user', routes4);
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 
 app.use(function(req, res, next) {
+
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
       jsonwebtoken.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
         if (err) req.user = undefined;
@@ -38,6 +38,17 @@ app.use(function(req, res, next) {
       next();
     }
   });
+
+
+
+
+app.use('/api/examtype', routes);
+app.use('/api/student', routes1);
+app.use('/api/subject', routes2);
+app.use('/api/exam', routes3);
+app.use('/api/user', routes4);
+
+
 
 database.on('error', (error) => {
     console.log(error)
