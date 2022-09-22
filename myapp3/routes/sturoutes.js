@@ -34,13 +34,84 @@ router.post('/post', async (req, res) => {
 //Get all Method
 router.get('/getAll', async (req, res) => {
     try{
-        const data = await Model.find();
-        res.json(data)
+        if(req.query.page&&req.query.limit){
+            const data = await Model.paginate({},{page:req.query.page,limit:req.query.limit});
+        //
+             res.json(data)
+        }
+        else{
+            const data = await Model.find();
+            res.json(data);
+
+        }
     }
     catch(error){
         res.status(500).json({message: error.message})
     }
 })
+//Get all name starts with
+router.get('/getdata/:name?/:rno?', async (req, res) => {
+    try{
+        
+        if((req.params.name!=undefined)&&(req.params.rno!=undefined))
+        {
+        console.log("namerno");
+        const data = await Model.find({name :  {$regex : `^${req.params.name}.*` , $options: 'i' },rno : req.params.rno});
+        res.json(data)}
+
+        else if(req.params.name!=undefined)
+        {
+        console.log("name");
+        const data = await Model.find({name :  {$regex : `^${req.params.name}.*` , $options: 'i' }});
+        res.json(data)}
+
+        else if(req.params.rno!=undefined)
+        {
+        console.log("rno");
+        const data = await Model.find({rno : req.params.rno });
+        res.json(data)}
+        else {
+        console.log("no");
+        const data = await Model.find();
+        res.json(data)
+        }
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+
+router.get('/getname', async (req, res) => {
+    try{
+        
+        if(req.query.name&&req.query.rno)
+        {
+        
+        const data = await Model.find({name :  {$regex : `^${req.query.name}.*` , $options: 'i' },rno : req.query.rno});
+        res.json(data)}
+
+        else if(req.query.name)
+        {
+        
+        const data = await Model.find({name :  {$regex : `^${req.query.name}.*` , $options: 'i' }});
+        res.json(data)}
+
+        else if(req.query.rno)
+        {
+        
+        const data = await Model.find({rno : req.query.rno });
+        res.json(data)}
+        else {
+        
+        const data = await Model.find();
+        res.json(data)
+        }
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+
 //Get by ID Method
 router.get('/getOne/:id', async (req, res) => {
     try{

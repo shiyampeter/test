@@ -2,7 +2,7 @@ const express = require('express');
 const Model = require('../model/user');
 const router = express.Router();
 const Joi= require('joi');
-//const { validateExam } = require('../validate/examvalidate');
+const { validateUser } = require('../validate/uservalidate');
 const mongoose=require('mongoose');
 const bodyparser=require('body-parser');
 
@@ -14,6 +14,13 @@ const bcrypt = require('bcrypt');
 //const User = require('../model/user');
 
 router.post('/post/register', async (req, res) => {
+
+  const {error, value} = validateUser(req.body);
+    if (error){
+        console.log("error");
+       // return res.send(error.details[0]);
+        return res.json({success : false, message:"Validation error", error: [error.message]});
+    }
 
     const data = new Model({
         fullName: req.body.fullName,
