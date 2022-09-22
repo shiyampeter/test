@@ -49,6 +49,26 @@ router.get('/getAll', async (req, res) => {
         res.status(500).json({message: error.message})
     }
 })
+//Get all Method using skip and limit
+router.get('/get', async (req, res) => {
+    try{
+        if(req.query.page&&req.query.limit){
+            var limit=req.query.limit;
+            var page=req.query.page;
+            const data = await Model.find().limit(limit).skip(page).sort( {_id:-1} );
+        //
+             res.json(data)
+        }
+        else{
+            const data = await Model.find();
+            res.json(data);
+
+        }
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
 //Get all name starts with
 router.get('/getdata/:name?/:rno?', async (req, res) => {
     try{
