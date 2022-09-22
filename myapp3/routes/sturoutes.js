@@ -31,7 +31,7 @@ router.post('/post', async (req, res) => {
     }
 })
 
-//Get all Method
+//Get all Method using npm paginate v2
 router.get('/getAll', async (req, res) => {
     try{
         if(req.query.page&&req.query.limit){
@@ -52,16 +52,20 @@ router.get('/getAll', async (req, res) => {
 //Get all Method using skip and limit
 router.get('/get', async (req, res) => {
     try{
+        var limit=req.query.limit;
+        var page=req.query.page;
+        
         if(req.query.page&&req.query.limit){
-            var limit=req.query.limit;
-            var page=req.query.page;
-            const data = await Model.find().limit(limit).skip(page).sort( {_id:-1} );
-        //
-             res.json(data)
+           
+            const data = await Model.find().limit(limit).skip((page-1)*limit).sort( {_id:-1} );
+            count=data.length;
+        
+             res.json({data,count})
         }
         else{
             const data = await Model.find();
-            res.json(data);
+            count=data.length;
+            res.json(data,count);
 
         }
     }
