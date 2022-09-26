@@ -23,6 +23,7 @@ const examtyperoutes = require('./routes/extyperoutes');
 const studentroutes = require('./routes/studentroutes');
 const examroutes = require('./routes/exroutes');
 const userroutes = require('./routes/useroutes');
+const emailroutes = require('./routes/emailroute');
 
 
 const app = express();
@@ -59,6 +60,7 @@ app.use('/api/examtypes',examtyperoutes);
 app.use('/api/students',studentroutes);
 app.use('/api/exams',examroutes);
 app.use('/api/users',userroutes);
+app.use('/api',emailroutes);
 
 
 
