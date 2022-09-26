@@ -1,13 +1,11 @@
-const express = require('express');
+
 const Model = require('../model/student');
-const router = express.Router();
 const Joi= require('joi');
 const{validateStudent}= require('../validate/studentvalidate');
-const { db } = require('../model/student');
 const authenticate = require('../middlewares/authenticate')
 
 //Post Method
-router.post('/post', async (req, res) => {
+const store = async(req,res,next) => {
     const {error, value} = validateStudent(req.body);
     if (error){
         console.log("error");
@@ -30,10 +28,10 @@ router.post('/post', async (req, res) => {
     catch (error) {
         res.status(400).json({message: error.message})
     }
-})
+}
 
 //Get all Method using npm paginate v2
-router.get('/getAll', async (req, res) => {
+const viewbypage = async(req,res,next) => {
     try{
         if(req.query.page&&req.query.limit){
             const data = await Model.paginate({},{page:req.query.page,limit:req.query.limit});
@@ -49,9 +47,9 @@ router.get('/getAll', async (req, res) => {
     catch(error){
         res.status(500).json({message: error.message})
     }
-})
+}
 //Get all Method using skip and limit
-router.get('/get',authenticate ,async (req, res) => {
+const viewpage = async(req,res,next) => {
     try{
         var limit=req.query.limit;
         var page=req.query.page;
@@ -73,26 +71,26 @@ router.get('/get',authenticate ,async (req, res) => {
     catch(error){
         res.status(500).json({message: error.message})
     }
-})
+}
 //Get all name starts with
-router.get('/getdata/:name?/:rno?', async (req, res) => {
+const viewbyname = async(req,res,next) => {
     try{
         
         if((req.params.name!=undefined)&&(req.params.rno!=undefined))
         {
-        console.log("namerno");
+        
         const data = await Model.find({name :  {$regex : `^${req.params.name}.*` , $options: 'i' },rno : req.params.rno});
         res.json(data)}
 
         else if(req.params.name!=undefined)
         {
-        console.log("name");
+       
         const data = await Model.find({name :  {$regex : `^${req.params.name}.*` , $options: 'i' }});
         res.json(data)}
 
         else if(req.params.rno!=undefined)
         {
-        console.log("rno");
+       
         const data = await Model.find({rno : req.params.rno });
         res.json(data)}
         else {
@@ -104,9 +102,9 @@ router.get('/getdata/:name?/:rno?', async (req, res) => {
     catch(error){
         res.status(500).json({message: error.message})
     }
-})
+}
 
-router.get('/getname',authenticate ,async (req, res) => {
+const viewbyoption = async(req,res,next) => {
     try{
         
         if(req.query.name&&req.query.rno)
@@ -135,10 +133,10 @@ router.get('/getname',authenticate ,async (req, res) => {
     catch(error){
         res.status(500).json({message: error.message})
     }
-})
+}
 
 //Get by ID Method
-router.get('/getOne/:id', async (req, res) => {
+const viewone = async(req,res,next) => {
     try{
         
         const data = await Model.findById(req.params.id);
@@ -147,13 +145,13 @@ router.get('/getOne/:id', async (req, res) => {
     catch(error){
         res.status(500).json({message: error.message})
     }
-})
+}
 
 //Update by ID Method
-router.patch('/update/:id', async (req, res) => {
+const update = async(req,res,next) => {
     const {error, value} = validateStudent(req.body);
     if (error){
-        console.log("error");
+      
         return res.send(error.details[0]);
     }
     try {
@@ -170,10 +168,10 @@ router.patch('/update/:id', async (req, res) => {
     catch (error) {
         res.status(400).json({ message: error.message })
     }
-})
+}
 
 //Delete by ID Method
-router.delete('/delete/:id', async (req, res) => {
+const erase = async(req,res,next) => {
     try {
         const id = req.params.id;
         const data = await Model.findByIdAndDelete(id)
@@ -182,5 +180,5 @@ router.delete('/delete/:id', async (req, res) => {
     catch (error) {
         res.status(400).json({ message: error.message })
     }
-})
-module.exports = router;
+}
+module.exports = {store,update,erase,viewone,viewbypage,viewpage,viewbyname,viewbyoption};
