@@ -44,21 +44,21 @@ const mail = async(req,res,next) => {
     })
 }
 
-/*const mail = async(req,res,next) => {
+const mailout = async(req,res,next) => {
     
     let transporter = nodemailer.createTransport({
         service: "hotmail",
         auth: {
           
-          user: 'mytestpetershiyam@gmail.com', 
-          pass: ''
+          user: 'mytestpetershiyam@outlook.com', 
+          pass: 'petershiyam@123'
         }
       });
 
 
 
     var compose = {
-        from: '"peter" <mytestpetershiyam@gmail.com>', // sender address
+        from: '"peter" <mytestpetershiyam@outlook.com>', // sender address
         to: "shiyampeter@gmail.com", // list of receivers
         subject: "Hello ✔", // Subject line
         text: "Hello world?", // plain text body
@@ -75,5 +75,5 @@ const mail = async(req,res,next) => {
             console.log("success")
         }
     })
-}*/
-module.exports = {mail};
+}
+module.exports = {mail,mailout};

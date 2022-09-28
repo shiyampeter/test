@@ -15,14 +15,13 @@ var UserSchema = new Schema({
   },
   email: {
     type: String,
-    unique: true,
+    //unique: true,
     lowercase: true,
     trim: true,
     required: true
   },
   password: {
-    type: String,
-    required :true
+    type: String
   }
 });
 
